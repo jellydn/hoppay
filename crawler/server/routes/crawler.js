@@ -50,11 +50,9 @@ module.exports = function(Crawler, app, auth, database) {
 								"categories":tmp1[0].trim(),
 								"subs":[]
 							});
+							/**
 							CategoriesModel.findOne({ 'title': tmp1[0] }, function (err, c) {
 							  if (!err){
-									
-								}else{
-									
 									var cat = new CategoriesModel();
 									cat.title = tmp1[0];
 									cat.save(function(err) {
@@ -64,9 +62,12 @@ module.exports = function(Crawler, app, auth, database) {
 										  });
 										}
 									});
+								}else{
+									
+									
 								}
 							});
-							
+							**/
 							
 						}else{
 							
@@ -128,37 +129,30 @@ module.exports = function(Crawler, app, auth, database) {
 			// }
 			// res.json(test);
 			
-			// CategoriesModel.find({ }, function (err, data) {
-				// if (!err){
-					// for(var i = 0; i<data.length;i++){
-						// for(var j = 0 ;j<categoriesFilters1.length ; j++){
-							
-							// if(categoriesFilters1[j][0].trim() == data[i].title.trim()){
-								
-								
-								
-								// var sub = new SubCategoriesModel();
-								// sub.title = categoriesFilters1[j][1].trim();
-								// sub.parent = data._id;
-								// sub.save(function(err) {});
-							// }
-						// }
-					// }
-				// }else{
-						
-				// }
-			// });
+
 			
 			
 			
 			
 			for(var i=0; i<categoriesFilters7.length;i++){
-				
+
+				// console.log(categoriesFilters7[i].categories);
 				for(var j=0; j<categoriesFilters1.length;j++){
-					
 					if(categoriesFilters1[j][0].trim() == categoriesFilters7[i].categories.trim()){
 						
 						categoriesFilters7[i].subs.push({name:categoriesFilters1[j][1].trim(),"subs":[]});
+						CategoriesModel.find({ 'title': categoriesFilters7[i].categories.trim() }, function (err, c) {
+							if(typeof c == "object" && c!= null && c.length!=0){
+								
+								
+								console.log(categoriesFilters1[j][1].trim());
+								console.log(tmp);
+								var s = new SubCategoriesModel();
+								// s.title = categoriesFilters1[j][1].trim();
+								// s.parent = c._id;
+								// s.save();
+							}
+						});
 					}
 				}
 				
