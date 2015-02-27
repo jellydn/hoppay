@@ -20,6 +20,16 @@ var SubCategoriesSchema = new Schema({
     required: true,
     trim: true
   },
+  name_parent: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  type: {
+    type: String,
+    required: true,
+    trim: true
+  },
   parent: {
     type: Schema.ObjectId,
     ref: 'Categories'

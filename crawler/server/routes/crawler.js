@@ -24,6 +24,17 @@ module.exports = function(Crawler, app, auth, database) {
   app.get('/crawler/example/admin', auth.requiresAdmin, function(req, res, next) {
     res.send('Only users with Admin role can access this');
   });
+  app.get('/categories/mapping', function(req, res, next) {
+		
+		SubCategoriesModel.find({type:"1"},function(err,data){
+			for(var i = 0; i< data.length; i++){
+				console.log(data[i].title + " --- "+ data[i].name_parent);
+			}
+			
+			
+		});
+		res.json({'test':'Integrate'});
+  });
   app.get('/crawler/categories', function(req, res, next) {
 
 
@@ -50,7 +61,7 @@ module.exports = function(Crawler, app, auth, database) {
 								"categories":tmp1[0].trim(),
 								"subs":[]
 							});
-							/**
+		
 							CategoriesModel.findOne({ 'title': tmp1[0] }, function (err, c) {
 							  if (!err){
 									var cat = new CategoriesModel();
@@ -67,7 +78,7 @@ module.exports = function(Crawler, app, auth, database) {
 									
 								}
 							});
-							**/
+
 							
 						}else{
 							
@@ -111,48 +122,23 @@ module.exports = function(Crawler, app, auth, database) {
 				}
 				
 			}
-			// console.log(categoriesFilters5.length);
-			// console.log(categoriesFilters6.length);
-			// var test = [];
-			// for(var i = 0 ;i<categoriesFilters2.length ; i++){
-				// var tmp1 = categoriesFilters2[i];
-				// SubCategoriesModel.findOne({ 'title': tmp1[1].trim() }, function (err, data) {
-					// if (!err){
-						
-						// console.log(data);
-						// test.push(data);
-					// }else{
-						// test.push(data);
-						
-					// }
-				// });
-			// }
-			// res.json(test);
-			
 
-			
-			
-			
+
 			
 			for(var i=0; i<categoriesFilters7.length;i++){
 
-				// console.log(categoriesFilters7[i].categories);
+				
 				for(var j=0; j<categoriesFilters1.length;j++){
 					if(categoriesFilters1[j][0].trim() == categoriesFilters7[i].categories.trim()){
 						
 						categoriesFilters7[i].subs.push({name:categoriesFilters1[j][1].trim(),"subs":[]});
-						CategoriesModel.find({ 'title': categoriesFilters7[i].categories.trim() }, function (err, c) {
-							if(typeof c == "object" && c!= null && c.length!=0){
-								
-								
-								console.log(categoriesFilters1[j][1].trim());
-								console.log(tmp);
-								var s = new SubCategoriesModel();
-								// s.title = categoriesFilters1[j][1].trim();
-								// s.parent = c._id;
-								// s.save();
-							}
-						});
+						
+						var s = new SubCategoriesModel();
+						s.title = categoriesFilters1[j][1].trim();
+						s.name_parent = categoriesFilters7[i].categories.trim();
+						s.type = 1;
+						s.save();
+						
 					}
 				}
 				
@@ -161,24 +147,50 @@ module.exports = function(Crawler, app, auth, database) {
 						if(categoriesFilters2[k][1].trim() == categoriesFilters7[i].subs[j].name.trim()){
 							
 							categoriesFilters7[i].subs[j].subs.push({name:categoriesFilters2[k][2].trim(),"subs":[]});
+							
+							var s = new SubCategoriesModel();
+							s.title = categoriesFilters2[k][2].trim();
+							s.name_parent = categoriesFilters7[i].subs[j].name.trim();
+							s.type = 0;
+							s.save();
+
 						}
 					}
 					for(var k=0; k<categoriesFilters7[i].subs[j].subs.length;k++){
 						for(var n=0; n<categoriesFilters3.length;n++){
 							if(categoriesFilters3[n][2].trim() == categoriesFilters7[i].subs[j].subs[k].name.trim()){
 								categoriesFilters7[i].subs[j].subs[k].subs.push({name:categoriesFilters3[n][3].trim(),"subs":[]});
+								
+								var s = new SubCategoriesModel();
+								s.title = categoriesFilters3[n][3].trim();
+								s.name_parent = categoriesFilters7[i].subs[j].subs[k].name.trim();
+								s.type = 0;
+								s.save();
 							}
 						}
 						for(var kk=0; kk<categoriesFilters7[i].subs[j].subs[k].subs.length;kk++){
 							for(var nn=0; nn<categoriesFilters4.length;nn++){
 								if(categoriesFilters4[nn][3].trim() == categoriesFilters7[i].subs[j].subs[k].subs[kk].name.trim()){
 									categoriesFilters7[i].subs[j].subs[k].subs[kk].subs.push({name:categoriesFilters4[nn][4].trim(),"subs":[]});
+									
+									
+									var s = new SubCategoriesModel();
+									s.title = categoriesFilters4[nn][4].trim();
+									s.name_parent = categoriesFilters7[i].subs[j].subs[k].subs[kk].name.trim();
+									s.type = 0;
+									s.save();
 								}
 							}
 							for(var kkk=0; kkk<categoriesFilters7[i].subs[j].subs[k].subs[kk].subs.length;kkk++){
 								for(var nnn=0; nnn<categoriesFilters5.length;nnn++){
 									if(categoriesFilters5[nnn][4].trim() == categoriesFilters7[i].subs[j].subs[k].subs[kk].subs[kkk].name.trim()){
 										categoriesFilters7[i].subs[j].subs[k].subs[kk].subs[kkk].subs.push({name:categoriesFilters5[nnn][5].trim(),"subs":[]});
+										
+										var s = new SubCategoriesModel();
+										s.title = categoriesFilters5[nnn][5].trim();
+										s.name_parent = categoriesFilters7[i].subs[j].subs[k].subs[kk].subs[kkk].name.trim();
+										s.type = 0;
+										s.save();
 									}
 								}
 								
@@ -186,6 +198,12 @@ module.exports = function(Crawler, app, auth, database) {
 									for(var nnnn=0; nnnn<categoriesFilters6.length;nnnn++){
 										if(categoriesFilters6[nnnn][5].trim() == categoriesFilters7[i].subs[j].subs[k].subs[kk].subs[kkk].subs[kkkk].name.trim()){
 											categoriesFilters7[i].subs[j].subs[k].subs[kk].subs[kkk].subs[kkkk].subs.push({name:categoriesFilters6[nnnn][6].trim(),"subs":[]});
+											
+											var s = new SubCategoriesModel();
+											s.title = categoriesFilters6[nnnn][6].trim();
+											s.name_parent = categoriesFilters7[i].subs[j].subs[k].subs[kk].subs[kkk].subs[kkkk].name.trim();
+											s.type = 0;
+											s.save();
 										}
 									}
 								}
