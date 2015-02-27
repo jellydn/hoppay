@@ -9,8 +9,8 @@ var mongoose = require('mongoose'),
   DomainModel = mongoose.model('Domain'),
   ShopsModel = mongoose.model('Shops'),
   _ = require('lodash');
-  
-  
+var fetchUrl = require("fetch").fetchUrl;
+	
 /* jshint -W098 */
 // The Package is past automatically as first parameter
 module.exports = function(Crawler, app, auth, database) {
@@ -26,91 +26,97 @@ module.exports = function(Crawler, app, auth, database) {
 	app.get('/crawler/example/admin', auth.requiresAdmin, function(req, res, next) {
 		res.send('Only users with Admin role can access this');
 	});
-	app.get('/api/addLink', function(req, res, next) {
-		DomainModel.remove(function(err) { });
-		
-		var data = {
-			domain:"markavip.com",
-			cat:"Handbags"
+	
+	app.get('/api/products', function(req, res, next) {
+		var categories = (typeof req.query.categories!= "undefined") ? req.query.categories : '';
+		var title = (typeof req.query.title!= "undefined") ? req.query.title : '';
+		var object = {};
+	
+			
+		object = {
+			'categories':new RegExp(categories, 'i'),
+			'title':new RegExp(title, 'i')
 		};
 		
-		var d = new DomainModel();
-		d.domain = data.domain;
-		d.cat = data.cat;
-		d.api = "https://api.import.io/store/data/293d66fa-f055-4e5a-b856-bc3ccee61fff/_query?input/webpage/url=http%3A%2F%2Fmarkavip.com%2Fsa%2Fcatalog%2Fwomen%2Faccessories%2Fhandbags%3Fpage%3D1&_user=0fa9234a-88c7-465e-8ded-d9ead9e353fb&_apikey=p4cFPH01U63mmlvR2Gc6ccEP4DM3YzE8ETfGYrCrcMn887%2FpNIQSfqcF4DsagR8WN4Pd8tnV3ZsfzkXE6PRg%2Bw%3D%3D";
-		d.status = 0;
-		d.save(function(err) { });
-		
-		var d = new DomainModel();
-		d.domain = data.domain;
-		d.cat = data.cat;
-		d.api = "https://api.import.io/store/data/2be95d4c-5d7f-4221-8ca7-d5e082aeab0d/_query?input/webpage/url=http%3A%2F%2Fmarkavip.com%2Fsa%2Fcatalog%2Fwomen%2Faccessories%2Fhandbags%3Fpage%3D2&_user=0fa9234a-88c7-465e-8ded-d9ead9e353fb&_apikey=p4cFPH01U63mmlvR2Gc6ccEP4DM3YzE8ETfGYrCrcMn887%2FpNIQSfqcF4DsagR8WN4Pd8tnV3ZsfzkXE6PRg%2Bw%3D%3D";
-		d.status = 0;
-		
-		data.cat = "Shoes";
-		var d = new DomainModel();
-		d.domain = data.domain;
-		d.cat = data.cat;
-		d.api = "https://api.import.io/store/data/2be95d4c-5d7f-4221-8ca7-d5e082aeab0d/_query?input/webpage/url=http%3A%2F%2Fmarkavip.com%2Fsa%2Fcatalog%2Fwomen%2Faccessories%2Fhandbags%3Fpage%3D2&_user=0fa9234a-88c7-465e-8ded-d9ead9e353fb&_apikey=p4cFPH01U63mmlvR2Gc6ccEP4DM3YzE8ETfGYrCrcMn887%2FpNIQSfqcF4DsagR8WN4Pd8tnV3ZsfzkXE6PRg%2Bw%3D%3D";
-		d.status = 0;
-		d.save(function(err) { });
-		
-		data.cat = "Athletic Shoes";
-		var d = new DomainModel();
-		d.domain = data.domain;
-		d.cat = data.cat;
-		d.api = "https://api.import.io/store/data/81b6fccb-1434-4c7a-9018-aa1708265dac/_query?input/webpage/url=http%3A%2F%2Fmarkavip.com%2Fsa%2Fcatalog%2Fmen%2Fshoes%2Fathletic%3Fpage%3D1&_user=0fa9234a-88c7-465e-8ded-d9ead9e353fb&_apikey=p4cFPH01U63mmlvR2Gc6ccEP4DM3YzE8ETfGYrCrcMn887%2FpNIQSfqcF4DsagR8WN4Pd8tnV3ZsfzkXE6PRg%2Bw%3D%3D";
-		d.status = 0;
-		d.save(function(err){ });
-		
-		res.json({
-			data:d
-			
+		ShopsModel.find(object,function(error,data){
+			ShopsModel.count(object,function(error,count){
+				res.json({
+					count:count,
+					data:data
+					
+				});
+			});
 		});
 	});
 	app.get('/api/crawlerProduct', function(req, res, next) {
-		var url = (typeof req.query.type!= "undefined") ? req.query.type : null;
+		var url = (typeof req.query.url!= "undefined") ? req.query.url : null;
+		var url1 = (typeof req.query.url!= "undefined") ? req.query.url : null;
+		var categories = (typeof req.query.categories!= "undefined") ? req.query.categories : null;
+		var _user = (typeof req.query._user!= "undefined") ? req.query._user : null;
+		var _apikey = (typeof req.query._apikey!= "undefined") ? req.query._apikey : null;
+		var _http = (typeof req.query._http!= "undefined") ? req.query._http : null;
 		
 		if(url == null){
 			res.json({
+				query:req.query,
+				url:url,
+				categories:categories,
 				error:true,
 				message:'Type not found'
 			});
 		}
 		
-		switch(url){
-			case "markavip.com":
-
-				request.get('https://api.import.io/store/data/293d66fa-f055-4e5a-b856-bc3ccee61fff/_query?input/webpage/url=http%3A%2F%2Fmarkavip.com%2Fsa%2Fcatalog%2Fwomen%2Faccessories%2Fhandbags%3Fpage%3D1&_user=0fa9234a-88c7-465e-8ded-d9ead9e353fb&_apikey=p4cFPH01U63mmlvR2Gc6ccEP4DM3YzE8ETfGYrCrcMn887%2FpNIQSfqcF4DsagR8WN4Pd8tnV3ZsfzkXE6PRg%2Bw%3D%3D', 
-					function (error, response, body) {
-					if (!error && response.statusCode == 200) {
-						var data =JSON.parse(body);
-						if(data.results.length!=0){
-							data = data.results;
-							for(var i = 0; i<data.length; i++){
-								var s = new ShopsModel();
-								s.old_price_number = data[i].old_price_number;
-								s.special_price_number = data[i].special_price_number;
-								s.link = data[i].link_1;
-								var title = data[i]['link_1/_text'];
-								title = title.replace("Free Shipping ","");
-								title = title.replace(" Please, pick your size BUY","");
-								title = title.replace(data[i]['special_price_number/_source'],"");
-								title = title.replace(data[i]['old_price_number/_source'],"");
-								s.title = title;
-								s.categories = "Shoes";
-								s.save();
-							}
-						}
-					}					
-				});
-			break;
-		}
-		res.json({
-			error:false,
-			data:[],
-			message:'Done'
+		_apikey = encodeURIComponent(_apikey);
+		url = url+"?input/webpage/url="+_http;
+		url = url+"&_user="+_user;
+		url = url+"&_apikey="+_apikey;
+		var data = [];
+		request.get("https://api.import.io/store/data/"+url, 
+			function (error, response, body) {
+	
+				
+			if (!error && response.statusCode == 200) {
+				data =JSON.parse(body);
+				
+				if(data.results.length!=0){
+					data = data.results;
+					for(var i = 0; i<data.length; i++){
+						var s = new ShopsModel();	
+						s.old_price_number = data[i].old_price_number;
+						s.special_price_number = data[i].special_price_number;
+						s.link = data[i].link_1;
+						var title = data[i]['link_1/_text'];
+						title = title.replace("Free Shipping ","");
+						title = title.replace(" Please, pick your size BUY","");
+						title = title.replace(data[i]['special_price_number/_source'],"");
+						title = title.replace(data[i]['old_price_number/_source'],"");
+						s.title = title;
+						s.categories = categories;
+						s.save();
+						
+						
+						// url1 = url1+"?input/webpage/url="+data[i].link_1;
+						// url1 = url1+"&_user="+_user;
+						// url1 = url1+"&_apikey="+_apikey1;
+						// console.log("https://api.import.io/store/data/"+url1);
+						// fetchUrl("https://api.import.io/store/data/"+url1, function(error, meta, body){
+							// console.log(JSON.parse(body));
+							// console.log(s._id);
+							
+						// });
+						
+					}
+				}
+			}
+			res.json({
+				_import:"https://api.import.io/store/data/"+url,
+				error:false,
+				data:data,
+				message:'Done'
+			});			
 		});
+			
+		
 		
 	
 	});
