@@ -144,6 +144,8 @@ module.exports = function(Crawler, app, auth, database) {
 		});
 		
 	});
+
+	  
   app.get('/api/categories1', function(req, res, next) {
 	
 	request.get('http://www.google.com/basepages/producttype/taxonomy.en-US.txt', function (error, response, body) {
@@ -157,6 +159,7 @@ module.exports = function(Crawler, app, auth, database) {
 			var categoriesFilters5 = [];
 			var categoriesFilters6 = [];
 			var categoriesFilters7 = [];
+			
 			if(tmp.length!=0){
 				for(var i = 1; i<tmp.length-1; i++){
 					var tmp1 = tmp[i].split(">");
@@ -167,14 +170,14 @@ module.exports = function(Crawler, app, auth, database) {
 								"categories":tmp1[0].trim(),
 								"subs":[]
 							});
-							if(req.query.crawler == "crawler"){
-								CategoriesModel.findOne({ 'title': tmp1[0] }, function (err, c) {
-								  if (!err){
-										var cat = new CategoriesModel();
-										cat.title = tmp1[0];
-										cat.save(function(err) { });
-									}
-								});
+							if(req.query.crawler == "crawler1"){
+								
+								
+								CategoriesModel.remove().exec();
+								var cat = new CategoriesModel();
+								cat.title = tmp1[0];
+								cat.save(function(err) { });
+								
 
 							}
 						}
