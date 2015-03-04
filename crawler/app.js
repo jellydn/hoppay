@@ -18,11 +18,12 @@ Crawler.register(function(app, auth, database) {
 
   //We are adding a link to the main menu for all authenticated users
   Crawler.menus.add({
-    title: 'crawler example page',
-    link: 'crawler example page',
+    title: 'Categories',
+    link: 'categories',
     roles: ['authenticated'],
     menu: 'main'
   });
+  
   
   Crawler.aggregateAsset('css', 'crawler.css');
 

@@ -17,12 +17,12 @@ Shops.register(function(app, auth, database) {
   Shops.routes(app, auth, database);
 
   //We are adding a link to the main menu for all authenticated users
-  Shops.menus.add({
-    title: 'shops example page',
-    link: 'shops example page',
-    roles: ['authenticated'],
-    menu: 'main'
-  });
+  // Shops.menus.add({
+    // title: 'shops example page',
+    // link: 'shops example page',
+    // roles: ['authenticated'],
+    // menu: 'main'
+  // });
   
   Shops.aggregateAsset('css', 'shops.css');
 

@@ -27,6 +27,14 @@ module.exports = function(Crawler, app, auth, database) {
 		res.send('Only users with Admin role can access this');
 	});
 	
+	app.get('/admin/categories',auth.requiresLogin, function(req, res, next) {
+		Crawler.render('categories', {
+			package: 'crawler'
+		}, function(err, html) {
+			//Rendering a view from the Package server/views
+			res.send(html);
+		});
+	});
 	app.get('/api/products', function(req, res, next) {
 		var categories = (typeof req.query.categories!= "undefined") ? req.query.categories : '';
 		var title = (typeof req.query.title!= "undefined") ? req.query.title : '';
@@ -120,7 +128,23 @@ module.exports = function(Crawler, app, auth, database) {
 		
 	
 	});
-  app.get('/api/categories', function(req, res, next) {
+	app.get('/api/subCategories', function(req, res, next) {
+		SubCategoriesModel.find({name_parent: req.query.cat}, function (err, c) {
+			
+				
+			res.json(c);
+		});
+	});
+	app.get('/api/categories', function(req, res, next) {
+		
+		CategoriesModel.find({ }, function (err, c) {
+			
+				
+			res.json(c);
+		});
+		
+	});
+  app.get('/api/categories1', function(req, res, next) {
 	
 	request.get('http://www.google.com/basepages/producttype/taxonomy.en-US.txt', function (error, response, body) {
 		if (!error && response.statusCode == 200) {

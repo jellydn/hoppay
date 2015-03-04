@@ -6,5 +6,13 @@ angular.module('mean.crawler').config(['$stateProvider',
       url: '/crawler/example',
       templateUrl: 'crawler/views/index.html'
     });
+	$stateProvider.state('categories', {
+      url: '/admin/categories',
+      templateUrl: 'crawler/views/categories.html'
+    });
+	$stateProvider.state('sub_categories', {
+      url: '/admin/sub_categories?cat',
+      templateUrl: 'crawler/views/sub_categories.html'
+    });
   }
 ]);
